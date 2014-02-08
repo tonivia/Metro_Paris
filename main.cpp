@@ -42,11 +42,13 @@ int main(int argc, char *argv[])
 
     //PHASE 2 : Mise en place des durée des trajet et des durées des correspondances
 
+    SetTempsArretMoyenStation(20.0);
+    SetCoefLinRegressionLineaire(0.9);
+    SetCoefQuadraRegressionLineaire(0.23);
     estimdurees Regress(MDistanceTrajet);
 
 
-
-    //double TempsCorrespndance = estimdurees.Get.TpsCorres();
+    double TempsCorrespndance = estimdurees.Get.TpsCorres();
     //std::vector <std::vector <double> > MDureeTrajet = estimdurees.GetMatriceDuree();
 
     /*

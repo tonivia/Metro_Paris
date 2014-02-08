@@ -37,6 +37,11 @@ void estimdurees::SetCoefQuadraRegressionLineaire(double beta2)
     m_TempsArretMoyenStation = beta2;
 }
 
+void estimdurees::SetTempsCorrespondanceMoyen(double TpsCorres)
+{
+    m_TpsCorres = TpsCorres;
+}
+
 double estimdurees::GetTpsCorres() const
 {
     return m_TpsCorres;
@@ -76,7 +81,8 @@ void estimdurees::CalculDureesTrajet()
 
 double estimdurees::CalculTempsCorrespondanceMoyen()
 {
-    // Dans cette méthode on pourrait utiliser d'autres méthodes (calculatoire ou statistique)
+    // Cette fonction permet si on le souhaite de
+    // coder de nouvelles méthodes (calculatoire ou statistique)
     // Pour obtenir un temps de correspondance moyen plus fidèle
     m_TpsCorres = 120.0;
     return m_TpsCorres;

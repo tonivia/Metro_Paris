@@ -13,6 +13,7 @@ public:
     void SetTempsArretMoyenStation(double beta0);
     void SetCoefLinRegressionLineaire(double beta1);
     void SetCoefQuadraRegressionLineaire(double beta2);
+    void SetTempsCorrespondanceMoyen(double TpsCorres);
 
     double GetTpsCorres(void)const;
     std::vector <std::vector <double> > GetMatriceDurees(void) const;
