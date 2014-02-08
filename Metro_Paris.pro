@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     ligne.cpp \
     trajetunit.cpp \
     dijkstra.cpp \
-    estimdurees.cpp
+    estimdurees.cpp \
+    fenetreprincipale.cpp
 
 HEADERS  += mainwindow.h \
     station.h \
@@ -27,6 +28,8 @@ HEADERS  += mainwindow.h \
     ligne.h \
     trajetunit.h \
     dijkstra.h \
-    estimdurees.h
+    estimdurees.h \
+    fenetreprincipale.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    fenetreprincipale.ui
