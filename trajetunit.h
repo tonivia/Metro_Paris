@@ -3,6 +3,7 @@
 #include <vector>
 #include "station.h"
 #include "ligne.h"
+#include <math.h>
 
 class trajetunit
 {

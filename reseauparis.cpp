@@ -1552,6 +1552,8 @@ void reseauparis::CreationReseauStation(void)
 
     //********************Ligne 5*************************//
 
+
+    // Décalage !!!!!!
     station NH(TNSC("Bobigny - Pablo Picasso"),48.906538,2.449994);
     NH.RTabLDS(5.1);
     NH.RTabLDS(5.2);

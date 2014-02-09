@@ -80,12 +80,19 @@ double trajetunit::CalculDistance()
         }
         else
         {
-            double D = 3;
-            //calcul de distance
-
-            // on initialise à 0.5 le vecteur qui contiendra la liste des codes des lignes utilisant ce trajet
-            m_TabLigneSurTrajet[0]=0.5;
-            m_Distance = D;
+            double PI = 3.14159265358979 ;
+            std::vector <double> GPSD = m_Debut.GPS();
+            std::vector <double> GPSD = m_Fin.GPS();
+            double LAD = GSPD[0] * ( PI / 180.0);
+            double LAF = GSPF[0] * (PI / 180.0);
+            double LOD = GSPD[1] * ( PI / 180.0);
+            double LOF = GSPF[1] * (PI / 180.0);
+            double s1 = sin (((LAD - LAF) / 2));
+            double s2 = sin (((LOD - LOF) / 2));
+            double R = 6371000 ; // Rayon terretre en mètre
+            //calcul de distance en mètre
+            m_Distance = 2 * R * asin (sqrt ((s1 * s1) + (cos (LAD) * cos (LAF) * s2 * s2)));
+            m_TabLigneSurTrajet[0]=0.5;      
             return m_Distance;
         }
     }
