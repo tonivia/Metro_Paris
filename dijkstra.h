@@ -7,7 +7,7 @@ class dijkstra
 {
 public:
     dijkstra(void);
-    dijkstra(std::vector <std::vector <double> > const& MatriceDureeTrajet, std::vector <std::vector <std::vector <double> > > const& MatriceLigneSurTrajet, double const& TpsCorres);
+    dijkstra(std::vector <std::vector <double> > const& MatriceDureeTrajet, std::vector <std::vector <std::vector <double> > > const& MatriceLigneSurTrajet, double const& TpsCorres, double const& Ta);
     ~dijkstra(void);
 
     void SetCodeStationDepart(int CSD);
@@ -15,6 +15,7 @@ public:
     void SetMatricePoidsArete(std::vector <std::vector <double> > MPA);
     void SetMatriceLigneSurTrajet(std::vector <std::vector <std::vector <double> > > MLST);
     void SetTpsCorres(double Tps);
+    void SetTpsAttente(double Ta);
 
     double GetDureeTotale(void) const;
     int GetNbCorres(void) const;
@@ -26,7 +27,7 @@ public:
    int AppartAVecteurNoeudATester(int CodeStationATester);
    std::vector <int> RechercheVoisin(int CodeStationAct);
    void LignePossibleTrajetAvecVoisin(std::vector <int> const& voisin);
-   void MajDistanceSommet(std::vector <int> const& voisin);
+   //void MajDistanceSommet(std::vector <int> const& voisin, int cpt);
    int RechercheMin(void);
    void AlgoDuree(void);
    void RecuperationPlusCourtChemin(void);
@@ -42,6 +43,7 @@ private:
     int m_CodeStationDepart;
     int m_CodeStationArrivee;
     double m_TpsCorres;
+    double m_TpsAttente;
     std::vector <std::vector <double> > m_MatricePoidsArete;
     std::vector <std::vector <std::vector <double> > > m_MatriceLigneSurTrajet;
 
@@ -66,6 +68,9 @@ private:
      * ligne sont possible on doit actualiser la ligne actuelle pour chaque trajet selon le chemin suivi
      * jusqu'à ce trajet
      */
+
+    std::vector <int> m_VecteurPredecesseur;
+
 
     // Champs de Sorties
     int m_NbCorres;

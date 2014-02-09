@@ -7,22 +7,25 @@ dijkstra::dijkstra()
     m_MatricePoidsArete = std::vector <std::vector <double> > (1,std::vector <double> (1,0.0));
     m_MatriceLigneSurTrajet = std::vector <std::vector <std::vector <double> > > (1,std::vector <std::vector <double> > (1,std::vector <double> (1,0.0)));
     m_TpsCorres = 0.0;
+    m_TpsAttente = 0.0;
     m_NbCorres = 0;
     m_DureeTotale = 0.0;
 
 }
 
-dijkstra::dijkstra(std::vector<std::vector<double> > const& MatriceDureeTrajet, std::vector<std::vector<std::vector<double> > > const& MatriceLigneSurTrajet, double const& TpsCorres)
+dijkstra::dijkstra(std::vector<std::vector<double> > const& MatriceDureeTrajet, std::vector<std::vector<std::vector<double> > > const& MatriceLigneSurTrajet, double const& TpsCorres, double const& Ta)
 {
     m_CodeStationDepart = 0;
     m_CodeStationArrivee = 0;
     m_MatricePoidsArete = MatriceDureeTrajet;
     m_MatriceLigneSurTrajet = MatriceLigneSurTrajet;
     m_TpsCorres = TpsCorres;
+    m_TpsAttente = Ta
     m_NbCorres = 0;
     int lgh = MatriceDureeTrajet.size();
     m_DureeTotale = 0.0;
     m_VecteurDistanceSommet = std::vector <double> (lgh,0.0);
+    m_VecteurPredecesseur = std::vector <double> (lgh,-1.0);
 
     int k=0;
     for (k=0;k<lgh;k++)
@@ -62,6 +65,11 @@ void dijkstra::SetTpsCorres(double Tps)
     m_TpsCorres = Tps;
 }
 
+void dijkstra::SetTpsAttente(double Ta)
+{
+    m_TpsAttente = Ta;
+}
+
 double dijkstra::GetDureeTotale() const
 {
     return m_DureeTotale;
@@ -96,7 +104,7 @@ void dijkstra::InitDijk()
             m_VecteurDistanceSommet[i] = 1000000.0;
         }
     }
-    m_VecteurNoeudATester.erase(m_VecteurNoeudATester.begin()+m_CodeStationDepart);
+    m_VecteurNoeudATester.erase(m_VecteurNoeudATester.begin() + m_CodeStationDepart);
 }
 
 int dijkstra::AppartAVecteurNoeudATester(int CodeStationATester)
@@ -104,7 +112,7 @@ int dijkstra::AppartAVecteurNoeudATester(int CodeStationATester)
     int k=0;
     int nbk = m_VecteurNoeudATester.size();
     int test = 0;
-    while(test == 0 || k <nbk)
+    while(test == 0 && k < nbk)
     {
         if(m_VecteurNoeudATester[k] == CodeStationATester)
         {
@@ -143,47 +151,143 @@ void dijkstra::LignePossibleTrajetAvecVoisin(std::vector <int> const& voisin)
     for(v=1;v<nbv;v++)
     {
         std::vector <double> A;
-        A = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+        A = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];// A modifier
         inter.push_back(A);
     }
     m_VecteurTridimLigneAct.push_back(inter);
 }
 // on obtient donc le vecteur des codes des ligne possible pour chaque trajet
 
-/*
-void dijkstra::MajDistanceSommet(std::vector <int> const& voisin)
+
+
+void dijkstra::MajDistanceSommet(std::vector <int> const& voisin, int cpt)
 {
-
-    int nbv = voisin.size();
-    int v=0;
-    int StationRef = voisin[0];
-    for (v=1;j<nbv;v++)
+    if(cpt == 0)
     {
-        if(StationRef == _CodeStationDepart)
+        // rien à faire pour le passage des "lignes possibles sur le trajet" aux "lignes réllement utilisées"
+        int nbv = voisin.size();
+        int v=1;
+        for(v=1;v<nbv;v++)
         {
-            _VecteurLigneAct[v] = _MatriceLigneSurTrajet[_CodeStationDepart][v];
-        }
-        else
-        {
-            int p = 0;
-            int nbp = Ligneprec.size();
-            std::vector <double> MLSTv = _MatriceLigneSurTrajet[StationRef][v];
-            int MLSTvsize = MLSTv.size();
-            for(p=0;p<nbp;p++)
-            {
-                if()
-            }
-            if()
-        }
-
-
-        if(_VecteurDistanceSommet[v] > _VecteurDistanceSommet[StationRef] + Trajet)
-        {
-            _VecteurDistanceSommet[v] = _VecteurDistanceSommet[StationRef] + Trajet ;
+            m_VecteurDistanceSommet[voisin[v]] = m_MatricePoidsArete[m_CodeStationDepart][voisin[v]];
+            m_VecteurPredecesseur[voisin[v]] = m_CodeStationDepart;
         }
     }
+    else
+    {
+        std::vector <double> t = m_VecteurTridimLigneAct[m_VecteurPredecesseur[voisin[0]]][voisin[0]];
+        // trier t par ordre croissant
+        int nbv = voisin.size();
+        int v=1;
+        for (v=1;j<nbv;v++)
+        {
+            int lt = t.size();
+            std::vector <double> vv = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+            // trier vv par ordre croissant
+            int lvv = vv.size();
+            if(lt == 2 && lvv == 2)
+            {
+                if((vv[0] == t[0] && vv[0] != t[1]) || (vv[0] == t[1] && vv[0] != t[0]) || (vv[1] == t[0] && vv[1] != t[1]) || (vv[1] == t[1] && vv[1] != t[0]) ) // pas de corres
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = // seule la ligne commune à t et vv reste
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+                else if((vv[0] == t[0] && vv[1] == t[1])) // pas de corres, trajet identique en terme de ligne
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+                else if((vv[0] != t[0] && vv[0] != t[1]) && (vv[1] != t[0] && vv[1] != t[1])) // corres
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres)
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres;
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+            }
+            else if(lt == 1 && lvv == 2)
+            {
+                if (vv[0] == t[0] || vv[1] == t[0]) // pas de corres mais on corrige la ligne emprunté pour le trajet voisin[0]->voisin[v]
+                {
+
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = // ligne commune entre trajet prec et trajet entre voisin[0] et voisin [v]
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+                else if (vv[0] != t[0] && vv[0] != t[1]) // corres
+                {
+
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres)
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres;
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+
+            }
+            else if(lt == 2 && lvv == 1)
+            {
+                if (vv[0] == t[0] || vv[0] == t[1]) // pas de corres
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+                else if (vv[0] != t[0] && vv[0] != t[1]) // corres
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres)
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres;
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+
+            }
+            else if(lt ==1 && lvv == 1)
+            {
+                if(vv[0] != t[0]) // corres (cas le plus fréquent)
+                {
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres)
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]] + m_TpsCorres;
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+                else // Pas de corres
+                {
+
+                    if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
+                    {
+                        m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
+                        m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
+                        m_VecteurPredecesseur[voisin[v]] = voisin[0];
+                    }
+                }
+            }
+        }
+    }
+
 }
-*/
+
 
 int dijkstra::RechercheMin()
 {
@@ -217,18 +321,19 @@ void dijkstra::AlgoDuree()
 {
     //Initialisation
     InitDijk();
+    int cpt = 0;
     int stop = m_MatricePoidsArete.size() - 1;
     int stmin = m_CodeStationDepart;
     std::vector <int> voisin;
 
     // Algorithme
-    while (stmin != m_CodeStationArrivee && stop > 0)
+    while (stmin != m_CodeStationArrivee && cpt < stop)
     {
         voisin = RechercheVoisin(stmin);
         LignePossibleTrajetAvecVoisin(voisin);
-        //MajDistanceSommet(voisin);
+        MajDistanceSommet(voisin, cpt);
         stmin = RechercheMin();
-        stop = stop - 1;
+        cpt + 1;
     }
 
     m_DureeTotale = m_VecteurDistanceSommet[m_CodeStationArrivee];
@@ -236,7 +341,17 @@ void dijkstra::AlgoDuree()
 
 void dijkstra::RecuperationPlusCourtChemin()
 {
-
+    m_ListeCodeStationPlusCourtChemin.push_back(m_CodeStationArrivee);
+    int prec = m_CodeStationArrivee;
+    int nbs = m_VecteurDistanceSommet.size();
+    int s=0;
+    while(prec != m_CodeStationDepart && s<nbs)
+    {
+        prec = m_VecteurPredecesseur[prec];
+        m_ListeCodeStationPlusCourtChemin.push_back(prec);
+        s = s+1;
+    }
+    std::reverse(m_ListeCodeStationPlusCourtChemin.begin(),m_ListeCodeStationPlusCourtChemin.end());
 }
 
 void dijkstra::ConstructionSortie()

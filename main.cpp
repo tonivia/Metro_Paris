@@ -42,34 +42,66 @@ int main(int argc, char *argv[])
 
     //PHASE 2 : Mise en place des durée des trajet et des durées des correspondances
 
-    SetTempsArretMoyenStation(20.0);
-    SetCoefLinRegressionLineaire(0.9);
-    SetCoefQuadraRegressionLineaire(0.23);
     estimdurees Regress(MDistanceTrajet);
+    Regress.SetTempsArretMoyenStation(20.0);
+    Regress.SetCoefLinRegressionLineaire(0.9);
+    Regress.SetCoefQuadraRegressionLineaire(0.23);
+    Regress.CalculDureesTrajet();
+    Regress.SetTempsCorrespondanceMoyen(240.0);
+    //std::vector <std::vector <double> > MDureeTrajet = Regress.GetMatriceDuree();
+    double Tcm = Regress.GetTpsCorres();
 
-
-    double TempsCorrespndance = estimdurees.Get.TpsCorres();
-    //std::vector <std::vector <double> > MDureeTrajet = estimdurees.GetMatriceDuree();
+    //Temps attente première station moyen (selon la RATP en secondes)
+    double Tam = 150.0;
 
     /*
-     * En effet comme le calcul des durée est le point du projet qui peut être trandformé pour
+     * En effet comme le calcul des durée est le point du projet qui peut être transformé pour
      * coller mieux à la réalité on le sépare de la construction du réseau.
      * Ainsi un utilisateur du programme pourra modifier l'algorithme permettant le calcul des
      * durées des trajet simple (trajet entre 2 stations directement liées) à partir de la distance
      * entre 2 stations (issues des coordonnées GPS)
      * Et aussi affiner les temps de correspondances que nous considerons comme unique et constant
+     * et égal à 4 minutes ou 240.0 secondes
+     * (valeur cohérante au vu de ce qui est dit sur le site de la RATP)
      */
 
 
     //PHASE 3 : recherche du chemin le plus rapide avec l'algorithme dijkstra
 
-    //dijkstra DJK(MDureeTrajet, MLigne);
 
-    // Testgit
+    //dijkstra DJK(MDureeTrajet, MLigne,Tcm,Tam);
+
 
 
 
     // PHASE 4 : Interface Graphique
+
+    // doonée de test
+
+    std::vector <double> TEST1(4,0.0);
+    std::vector <std::vector <double> > TEST2(3,TEST1);
+
+    TEST2[0][0] = 4.0;
+    TEST2[0][1] = 14.0;
+    TEST2[0][2] = 1.2;
+    TEST2[0][3] = 725.0;
+
+    TEST2[1][0] = 14.0;
+    TEST2[1][1] = 86.0;
+    TEST2[1][2] = 4.2;
+    TEST2[1][3] = 260.0;
+
+    TEST2[2][0] = 86.0;
+    TEST2[2][1] = 110.0;
+    TEST2[2][2] = 10.2;
+    TEST2[2][3] = 455.0;
+
+    double DurTot = 2070.0;
+    int nbcor = 2;
+
+
+
+
 
     QApplication a(argc, argv);
     MainWindow w;
