@@ -23,17 +23,20 @@ public:
 
     // fonction interne à l'algorithme
 
+   void RebootAlgo(void);
    void InitDijk(void);
    int AppartAVecteurNoeudATester(int CodeStationATester);
    std::vector <int> RechercheVoisin(int CodeStationAct);
    void LignePossibleTrajetAvecVoisin(std::vector <int> const& voisin);
-   //void MajDistanceSommet(std::vector <int> const& voisin, int cpt);
+   void IntDistanceLignePredecesseurSommet(std::vector <int> const& voisin);
+   void MajDistanceLignePredecesseurSommet(std::vector <int> const& voisin);
    int RechercheMin(void);
    void AlgoDuree(void);
    void RecuperationPlusCourtChemin(void);
    void ConstructionSortie(void);
 
    //fonction génrale pour execution de l'algorithme
+
 
    void AlgoDijkstra(int CodeStationDepart, int CodeStationArrivee);
 
@@ -51,6 +54,13 @@ private:
     std::vector <double> m_VecteurDistanceSommet;
     std::vector <int> m_VecteurNoeudATester;
     std::vector <int> m_ListeCodeStationPlusCourtChemin;
+    std::vector <int> m_VecteurPredecesseur;
+
+    std::vector <std::vector <double> > m_VecteurBidimTopCorres;
+    /* Il vaut 1.0 si il y a crrespondance au début d'un trajet (lors du chemin optimal)
+     * 0.0 si il n'y a pas de coorespondance
+     * 0.5 si c'est un trajet partant de la station de départ choisie
+     */
 
     std::vector <std::vector <int> > m_VecteurBidimNoeudVoisin;
     /* Vecteur Bi-dimensionnel :
@@ -59,18 +69,6 @@ private:
      */
 
     std::vector <std::vector <std::vector <double> > > m_VecteurTridimLigneAct;
-    /* Vecteur Tri-dimensionnel :
-     * Echelle 1 (extérieure) : nombre de recherche de voisin = nombre itération de l'algorithme dijkstra
-     * Echelle 2 : nombre de voisin et donc de trajet possible pour chaque recherche de voisin
-     * Echelle 3 : Nombre de ligne avec direction pour un trajet unitaire signé (1 ou 2 pour paris)
-     * Contenu : Code des lignes qui sont actualiser au fur et à mesure de l'algorithme
-     * En effet pour bien traiter la question des correspondances et des trajet unitaire où plusieurs
-     * ligne sont possible on doit actualiser la ligne actuelle pour chaque trajet selon le chemin suivi
-     * jusqu'à ce trajet
-     */
-
-    std::vector <int> m_VecteurPredecesseur;
-
 
     // Champs de Sorties
     int m_NbCorres;

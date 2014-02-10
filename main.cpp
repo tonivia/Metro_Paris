@@ -78,23 +78,27 @@ int main(int argc, char *argv[])
 
     // doonée de test
 
-    std::vector <double> TEST1(4,0.0);
+    std::vector <double> TEST1(5,0.0);
     std::vector <std::vector <double> > TEST2(3,TEST1);
 
     TEST2[0][0] = 4.0;
     TEST2[0][1] = 14.0;
-    TEST2[0][2] = 1.2;
-    TEST2[0][3] = 725.0;
+    TEST2[0][2] = 725.0;
+    TEST2[0][3] = 1.2;
+    TEST2[0][4] = 0.0;
+
 
     TEST2[1][0] = 14.0;
     TEST2[1][1] = 86.0;
-    TEST2[1][2] = 4.2;
-    TEST2[1][3] = 260.0;
+    TEST2[1][2] = 260.0;
+    TEST2[1][3] = 4.2;
+    TEST2[1][4] = 0.0;
 
     TEST2[2][0] = 86.0;
     TEST2[2][1] = 110.0;
-    TEST2[2][2] = 10.2;
-    TEST2[2][3] = 455.0;
+    TEST2[2][2] = 455.0;
+    TEST2[2][3] = 10.2;
+    TEST2[2][4] = 0.0;
 
     double DurTot = 2070.0;
     int nbcor = 2;
