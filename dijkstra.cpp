@@ -25,7 +25,7 @@ dijkstra::dijkstra(std::vector<std::vector<double> > const& MatriceDureeTrajet, 
     int lgh = MatriceDureeTrajet.size();
     m_DureeTotale = 0.0;
     m_VecteurDistanceSommet = std::vector <double> (lgh,0.0);
-    m_VecteurPredecesseur = std::vector <double> (lgh,-1.0);
+    m_VecteurPredecesseur = std::vector <int> (lgh,-1);
 
     int k=0;
     for (k=0;k<lgh;k++)
@@ -93,10 +93,10 @@ std::vector <std::vector <double> > dijkstra::GetMatriceSortie() const
 void dijkstra::RebootAlgo()
 {
     m_NbCorres = 0;
-    int lgh = m_MatricePoidsArete;
+    int lgh = m_MatricePoidsArete.size();
     m_DureeTotale = 0.0;
     m_VecteurDistanceSommet = std::vector <double> (lgh,0.0);
-    m_VecteurPredecesseur = std::vector <double> (lgh,-1.0);
+    m_VecteurPredecesseur = std::vector <int> (lgh,-1);
     m_ListeCodeStationPlusCourtChemin.clear();
     std::vector <std::vector <int> > del;
     m_VecteurBidimNoeudVoisin = del;
@@ -104,7 +104,7 @@ void dijkstra::RebootAlgo()
     m_MatriceSortie = del2;
     int lgl = m_VecteurBidimNoeudVoisin.size();
     int k=0;
-    for (k=0;k<lgh;k++)
+    for (k=0;k<lgl;k++)
     {
         m_VecteurNoeudATester.push_back(k);
         std::vector <double> A(lgh,0.0);
@@ -211,7 +211,7 @@ void dijkstra::MajDistanceLignePredecesseurSommet(std::vector <int> const& voisi
     // t trié par ordre croissant (cela est déjà fait lors de la construction)
     int nbv = voisin.size();
     int v=1;
-    for (v=1;j<nbv;v++)
+    for (v=1;v<nbv;v++)
     {
         std::vector <double> vv = m_MatriceLigneSurTrajet[voisin[0]][voisin[v]];
         // vv trié par ordre croissant (cela est déjà fait lors de la construction)
@@ -223,7 +223,8 @@ void dijkstra::MajDistanceLignePredecesseurSommet(std::vector <int> const& voisi
                 if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
                 {
                     m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
-                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = vv[0];  // seule la ligne commune à t et vv reste
+                    std::vector <double> svv(1,vv[0]);
+                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = svv;  // seule la ligne commune à t et vv reste
                     m_VecteurPredecesseur[voisin[v]] = voisin[0];
                 }
             }
@@ -232,7 +233,8 @@ void dijkstra::MajDistanceLignePredecesseurSommet(std::vector <int> const& voisi
                 if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
                 {
                     m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
-                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = vv[1];  // seule la ligne commune à t et vv reste
+                    std::vector <double> svv(1,vv[1]);
+                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = svv;  // seule la ligne commune à t et vv reste
                     m_VecteurPredecesseur[voisin[v]] = voisin[0];
                 }
             }
@@ -264,7 +266,8 @@ void dijkstra::MajDistanceLignePredecesseurSommet(std::vector <int> const& voisi
                 if(m_VecteurDistanceSommet[voisin[v]] > m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]])
                 {
                     m_VecteurDistanceSommet[voisin[v]] = m_VecteurDistanceSommet[voisin[0]] + m_MatricePoidsArete[voisin[0]][voisin[v]];
-                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = // ligne commune entre trajet prec et trajet entre voisin[0] et voisin [v]
+                    std::vector <double> st(1,t[0]);
+                    m_VecteurTridimLigneAct[voisin[0]][voisin[v]] = st; // ligne commune entre trajet prec et trajet entre voisin[0] et voisin [v]
                     m_VecteurPredecesseur[voisin[v]] = voisin[0];
                 }
             }
@@ -369,14 +372,14 @@ void dijkstra::AlgoDuree()
         voisin = RechercheVoisin(stmin);
         if(cpt == 0)
         {
-            IniDistanceLignePredecesseurSommet(voisin);
+            InitDistanceLignePredecesseurSommet(voisin);
         }
         else
         {
             MajDistanceLignePredecesseurSommet(voisin);
         }
         stmin = RechercheMin();
-        cpt + 1;
+        cpt = cpt + 1;
     }
 
     m_DureeTotale = m_VecteurDistanceSommet[m_CodeStationArrivee] + m_TpsAttente;
@@ -401,7 +404,7 @@ void dijkstra::RecuperationPlusCourtChemin()
 void dijkstra::ConstructionSortie()
 {
     //init
-    std::vector <double> intiial(5,0.0);
+    std::vector <double> initial(4,0.0);
     std::vector <int> CodeStationPostCorres;
     CodeStationPostCorres.push_back(m_ListeCodeStationPlusCourtChemin[1]);
     int test1 = m_ListeCodeStationPlusCourtChemin[0];
@@ -430,7 +433,7 @@ void dijkstra::ConstructionSortie()
         {
             cpt = cpt+1;
             m_MatriceSortie.push_back(initial);
-            test1d = static_cast<double>(test1i);
+            double test1d = static_cast<double>(test1i);
             m_MatriceSortie[cpt-1][1] = test1d;
             m_MatriceSortie[cpt][0] = test1d;
 
@@ -444,35 +447,33 @@ void dijkstra::ConstructionSortie()
     m_NbCorres = ms-1;
 
     //remplissage ligne emprunté par tronçon et durée tronçon
-    csi = static_cast<int>(m_MatriceSortie[0][1]);
+    int csi = static_cast<int>(m_MatriceSortie[0][1]);
     m_MatriceSortie[0][2] = m_VecteurDistanceSommet[csi];
     int h=0;
     for(h=0;h<ms;h++)
     {
         //ligne
-        recupdeb = static_cast<int>(m_MatriceSortie[h][0]);
-        recupfin = static_cast<int>(m_MatriceSortie[h][1]);
+        int recupdeb = static_cast<int>(m_MatriceSortie[h][0]);
+        int recupfin = static_cast<int>(m_MatriceSortie[h][1]);
         std::vector <double> lindebtronc = m_VecteurTridimLigneAct[recupdeb][CodeStationPostCorres[h]];
         std::vector <double> linfintronc = m_VecteurTridimLigneAct[m_VecteurPredecesseur[recupfin]][recupfin];
         if( lindebtronc.size() == 1)
         {
-            m_MatriceSortie[h][3] = lindebtronc[0];
-            m_MatriceSortie[h][4] = 0.5;
+            m_MatriceSortie[h][3] = lindebtronc[0];  
         }
         else if(lindebtronc.size() == 2 && linfintronc.size() == 2)
         {
             m_MatriceSortie[h][3] = lindebtronc[0];
-            m_MatriceSortie[h][4] = lindebtronc[1];
         }
         else if(lindebtronc.size() == 2 && linfintronc.size() == 1)
         {
             m_MatriceSortie[h][3] = linfintronc[0];
-            m_MatriceSortie[h][4] = 0.4;
+
         }
         //durée
         if (h>0)
         {
-        csi = static_cast<int>(m_MatriceSortie[h][1]);
+        int csi = static_cast<int>(m_MatriceSortie[h][1]);
         m_MatriceSortie[h][2] = m_VecteurDistanceSommet[csi] - m_MatriceSortie[h-1][2] - m_TpsCorres ;
         }
     }

@@ -13,23 +13,21 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     station.cpp \
     reseauparis.cpp \
     ligne.cpp \
     trajetunit.cpp \
     dijkstra.cpp \
     estimdurees.cpp \
-    fenetreprincipale.cpp
+    interface.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     station.h \
     reseauparis.h \
     ligne.h \
     trajetunit.h \
     dijkstra.h \
     estimdurees.h \
-    fenetreprincipale.h
+    interface.h
 
-FORMS    += mainwindow.ui \
-    fenetreprincipale.ui
+FORMS    += mainwindow.ui

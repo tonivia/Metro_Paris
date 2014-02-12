@@ -16,7 +16,7 @@ reseauparis::~reseauparis(void)
 {
 }
 
-std::vector <std::string> reseauparis::GetTableNomStation() const
+std::vector <QString> reseauparis::GetTableNomStation() const
 {
     return m_TableNomStation;
 }
@@ -26,7 +26,7 @@ std::vector <double> reseauparis::GetTableCodeLigne() const
     return m_TableCodeLigne;
 }
 
-std::vector <std::string> reseauparis::GetTableNomLigne() const
+std::vector <QString> reseauparis::GetTableNomLigne() const
 {
     return m_TableNomLigne;
 }
@@ -3332,4 +3332,10 @@ void reseauparis::CreationMatrices()
 }
 
 
-
+void reseauparis::CreationReseauComplet()
+{
+    Codage();
+    CreationReseauStation();
+    CreationReseauLigne();
+    CreationMatrices();
+}

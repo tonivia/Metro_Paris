@@ -82,11 +82,11 @@ double trajetunit::CalculDistance()
         {
             double PI = 3.14159265358979 ;
             std::vector <double> GPSD = m_Debut.GPS();
-            std::vector <double> GPSD = m_Fin.GPS();
-            double LAD = GSPD[0] * ( PI / 180.0);
-            double LAF = GSPF[0] * (PI / 180.0);
-            double LOD = GSPD[1] * ( PI / 180.0);
-            double LOF = GSPF[1] * (PI / 180.0);
+            std::vector <double> GPSF = m_Fin.GPS();
+            double LAD = GPSD[0] * ( PI / 180.0);
+            double LAF = GPSF[0] * (PI / 180.0);
+            double LOD = GPSD[1] * ( PI / 180.0);
+            double LOF = GPSF[1] * (PI / 180.0);
             double s1 = sin (((LAD - LAF) / 2));
             double s2 = sin (((LOD - LOF) / 2));
             double R = 6371000 ; // Rayon terretre en mètre

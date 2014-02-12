@@ -28,7 +28,7 @@ public:
    int AppartAVecteurNoeudATester(int CodeStationATester);
    std::vector <int> RechercheVoisin(int CodeStationAct);
    void LignePossibleTrajetAvecVoisin(std::vector <int> const& voisin);
-   void IntDistanceLignePredecesseurSommet(std::vector <int> const& voisin);
+   void InitDistanceLignePredecesseurSommet(std::vector <int> const& voisin);
    void MajDistanceLignePredecesseurSommet(std::vector <int> const& voisin);
    int RechercheMin(void);
    void AlgoDuree(void);

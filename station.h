@@ -1,7 +1,7 @@
 #ifndef STATION_H
 #define STATION_H
 #include <vector>
-#include <iostream>
+#include <QString>
 
 class station
 {

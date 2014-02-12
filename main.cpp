@@ -1,26 +1,20 @@
-#include "mainwindow.h"
-#include <QApplication>
-#include "reseauparis.h"
-#include "estimdurees.h"
-#include "dijkstra.h"
-
 #include <vector>
-#include <iostream>
+#include <QString>
+#include <QApplication>
+#include "estimdurees.h"
+#include "interface.h"
+
 
 int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
 
-    // PHASE 1 : Cosntruction Du Réseau
+    /* PHASE 1 : Cosntruction Du Réseau : On construit le réseau parisien complet avec 302 stations et 16 lignes (De 1 à 14, 3bis et 7bis) */
+    /***************************************************************************************************************************************/
 
-    // On construit le réseau parisien complet avec 302 stations et 16 lignes (De 1 à 14, 3bis et 7bis)
 
-    reseauparis RATP;
-    RATP.Codage();
-    RATP.CreationReseauStation();
-    RATP.CreationReseauLigne();
-    RATP.CreationMatrices();
-    std::vector <std::vector <double> > MDistanceTrajet = RATP.GetMatriceTrajet();
-    std::vector <std::vector <std::vector <double> > > MLigne= RATP.GetMatriceLigneSurTrajet();
+    //reseauparis RATP;
+    //RATP.CreationReseauComplet();
 
     /*
      * A l'issue de la construction nous obtenons donc 2 matrices :
@@ -28,31 +22,39 @@ int main(int argc, char *argv[])
      * - 0 entre une station et elle-même
      * - une valeur arbitrairement grande entre 2 stations qui ne sont pas en lien direct : 1 000 000
      * - la distance exacte entre 2 stations en lien direct
-     *
      * L'autre contient dans chacune de ses cases un vecteur avec les codes des "lignes avec direction"
      * qui utilisent chaque trajet.
-     *
      * Attention  :
-     * les trajets sont signés : A->B différent de b->A
-     * et de plus cette phase ne s'execute qu'une seule fois au lancement du programme
-     * et non pas à chaque nouvelle recherche de trajet optimal d'un utilisateur
+     * les trajets sont signés : A->B différent de B->A
      */
 
 
+    /* PHASE 2 : Mise en place des durée des trajet et des durées des correspondances */
+    /**********************************************************************************/
 
-    //PHASE 2 : Mise en place des durée des trajet et des durées des correspondances
 
-    estimdurees Regress(MDistanceTrajet);
-    Regress.SetTempsArretMoyenStation(20.0);
-    Regress.SetCoefLinRegressionLineaire(0.9);
-    Regress.SetCoefQuadraRegressionLineaire(0.23);
-    Regress.CalculDureesTrajet();
-    Regress.SetTempsCorrespondanceMoyen(240.0);
-    //std::vector <std::vector <double> > MDureeTrajet = Regress.GetMatriceDuree();
-    double Tcm = Regress.GetTpsCorres();
+    //std::vector <std::vector <double> > MDistanceTrajet = RATP.GetMatriceTrajet();
+    //std::vector <std::vector <std::vector <double> > > MLigne= RATP.GetMatriceLigneSurTrajet();
+    //estimdurees Regress(MDistanceTrajet);
 
-    //Temps attente première station moyen (selon la RATP en secondes)
-    double Tam = 150.0;
+    /* Les coefs proviennent de l'étude d'un échantillon de trajet pour lesquels la durée a été mesuré (résultats pris comme des données) */
+
+    /* On remplie le temps d'arrêt moyen à une station (intercept de la régression de la durée sur la distance entre 2 stations en secondes) */
+    //Regress.SetTempsArretMoyenStation(20.0);
+
+    /* On remplie le coef traduisant l'impact linéaire de la distance */
+    //Regress.SetCoefLinRegressionLineaire(0.9);
+
+    /* On remplie le coef traduisant l'impact de la distance au carré */
+    //Regress.SetCoefQuadraRegressionLineaire(0.23);
+
+    /* Temps de correspondance moyen (via la RATP en secondes) */
+    //Regress.SetTempsCorrespondanceMoyen(240.0);
+
+    /* Temps attente première station moyen (via la RATP en secondes)*/
+    //double Tam = 150.0;
+
+    //Regress.CalculDureesTrajet();
 
     /*
      * En effet comme le calcul des durée est le point du projet qui peut être transformé pour
@@ -66,15 +68,20 @@ int main(int argc, char *argv[])
      */
 
 
-    //PHASE 3 : recherche du chemin le plus rapide avec l'algorithme dijkstra
+    /* PHASE 3 : Mise en place de l'algorithme dijkstra */
+    /****************************************************/
 
 
+    //std::vector <std::vector <double> > MDureeTrajet = Regress.GetMatriceDuree();
+    //double Tcm = Regress.GetTpsCorres();
     //dijkstra DJK(MDureeTrajet, MLigne,Tcm,Tam);
 
 
 
 
-    // PHASE 4 : Interface Graphique
+    /* PHASE 4 : Recherche du trajet optimal et affichage du résultat via l'interface graphique */
+    /********************************************************************************************/
+
 
     // doonée de test
 
@@ -102,14 +109,15 @@ int main(int argc, char *argv[])
 
     double DurTot = 2070.0;
     int nbcor = 2;
+    double TPCoor = 240.0;
+    double Tam = 150.0;
+
+    interface Fenetre(TEST2,DurTot,nbcor,TPCor,Tam,RATP);
 
 
+    //interface Fenetre(RATP,DJK);
 
-
-
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    Fenetre.show();
 
     return a.exec();
 }

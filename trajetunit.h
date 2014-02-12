@@ -1,7 +1,6 @@
 #ifndef TRAJETUNIT_H
 #define TRAJETUNIT_H
 #include <vector>
-#include "station.h"
 #include "ligne.h"
 #include <math.h>
 
