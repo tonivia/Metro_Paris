@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     trajetunit.cpp \
     dijkstra.cpp \
     estimdurees.cpp \
-    interface.cpp
+    interface.cpp \
+    ongletdetailtrajet.cpp
 
 HEADERS  += \
     station.h \
@@ -28,6 +29,7 @@ HEADERS  += \
     trajetunit.h \
     dijkstra.h \
     estimdurees.h \
-    interface.h
+    interface.h \
+    ongletdetailtrajet.h
 
 FORMS    += mainwindow.ui

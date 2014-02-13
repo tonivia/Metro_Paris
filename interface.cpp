@@ -1,6 +1,6 @@
 #include "interface.h"
 
-interface::interface(std::vector<std::vector<double> > TEST, double AA, int BB, double CC, double DD,reseauparis const& RATP) : QWidget()
+interface::interface(std::vector<std::vector<double> > TEST, double CC, double DD,reseauparis const& RATP) : QWidget()
 {
     //ChampsTest
     m_TempsAttente = DD;
@@ -13,12 +13,13 @@ interface::interface(std::vector<std::vector<double> > TEST, double AA, int BB, 
 
     m_RATP = RATP;
     //m_DJK = DJK;
-    //m_TempsAttente = 0.0;
-    m_TpCor = 0.0;
+    //m_TempsAttente = DJK.GetTpAttente();
+    //m_TpCor = DJK.GetTpsCorres();
+    m_DurTot = 0.0;
     m_StationDepartSelect = -1;
     m_StationArriveeSelect = -1;
 
-
+    setWindowTitle("Métro Parisien");
     DefAlpha();
 
     // général
@@ -129,11 +130,6 @@ interface::interface(std::vector<std::vector<double> > TEST, double AA, int BB, 
     m_TextDurTot->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     m_TextDurTot->setText("Durée totale du trajet le plus rapide (en minutes) : ");
 
-    //double DTD = m_DJK.GetDureeTotale(); //suspendu pour test
-    DTD = AA; //ajouté pour test
-    int DTI = (int)DTD;
-    DTI = DTI + 1;
-    m_DurTot->display(DTI);
     m_DurTot->setDigitCount(2);
 
     m_SepV->setFrameStyle(QFrame::VLine | QFrame::Raised);
@@ -145,10 +141,6 @@ interface::interface(std::vector<std::vector<double> > TEST, double AA, int BB, 
     m_TextCorres->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     m_TextCorres->setText("Nombre de correspondances : ");
 
-    //double NBD = m_DJK.GetNbCorres(); //suspendu pour test
-    NBD = BB; //ajouté pour test
-    int NBI = (int)NBD;
-    m_NbCorres->display(NBI);
     m_NbCorres->setDigitCount(1);
 
 
@@ -173,17 +165,7 @@ interface::interface(std::vector<std::vector<double> > TEST, double AA, int BB, 
     //Onglets
 
     m_Onglets = new QTabWidget;
-
-
-
-
-
-
-
-
-
-
-
+    m_VectOnglets = new QVector<ongletdetailtrajet>;
 
     m_DispoVGen->addWidget(m_FrameRecherche);
     m_DispoVGen->addWidget(m_FrameResult);
@@ -246,6 +228,7 @@ void interface::MajListeStaDep(int RgDepLetSta)
         }
     }
     m_ListeStaDep->addItems(m_QSListeStaDep);
+    m_ListeStaDep->update();
 }
 
 void interface::MajListeStaArr(int RgArrLetSta)
@@ -268,6 +251,7 @@ void interface::MajListeStaArr(int RgArrLetSta)
         }
     }
     m_ListeStaArr->addItems(m_QSListeStaArr);
+    m_ListeStaArr->update();
 }
 
 void interface::RecupCodeDepSelect(int CodeStaDepSelect)
@@ -285,13 +269,81 @@ void interface::RecupCodeArrSelect(int CodeStaArrSelect)
 
 void interface::ExecutionAlgoDijkstra()
 {
-    //m_DJK.AlgoDijkstra(m_StationDepartSelect,m_StationArriveeSelect); //suspendu pour test
+    if(m_StationDepartSelect == m_StationArriveeSelect || m_StationDepartSelect == -1 || m_StationArriveeSelect == -1)
+    {
+        QMessageBox::warning(this,"Erreur","Veuillez choisr des Stations de Départ et d'Arrivée (qui soient différentes)");
+    }
+    else
+    {
+        /*Suppression Ancien affichage */
+        delete m_Onglets;
+        m_VectOnglets->clear();
+        m_Onglets = new QTabWidget;
 
+        /*Excution Alogrithme */
+
+        //m_DJK.AlgoDijkstra(m_StationDepartSelect,m_StationArriveeSelect); //suspendu pour test
+        int nbo = m_CheminOpt.size();
+        //m_CheminOpt = m_DJK.GetMatriceSortie(); //suspendu pour test
+
+        //transformation Temps d'attente et temps de correspondance en minutes (avec arrondi supérieur)
+        m_TpCor = m_TpCor / 60;
+        int TPC = (int)m_TpCor;
+        TPC = TPC + 1;
+        m_TempsAttente = m_TempsAttente / 60;
+        int TPA =(int)m_TempsAttente;
+        TPA = TPA + 1;
+
+        /* Nouvel Affichage et calcul durée totale reconstitué et arrondi */
+        int DureeTotalEstim = (TPC * (nbo-1)) + TPA;
+        int o=0;
+        for(o=0;o<nbo;o++)
+        {
+            int st1 = (int)m_CheminOpt[o][0];
+            QString ST1 = m_RATP.TCSN(st1);
+            int st2 = (int)m_CheminOpt[o][1];
+            QString ST2 = m_RATP.TCSN(st2);
+            int st3 = (int)m_CheminOpt[o][2];
+            st3 = st3 + 1;
+            DureeTotalEstim = DureeTotalEstim + st3;
+            QString ST3 = QString::number(st3);
+            QString ST4 = m_RATP.TCLN(m_CheminOpt[o][3]);
+
+            if (o==0)
+            {
+                QString ST5 = QString::number(TPA);
+            }
+            else
+            {
+                QString ST5 = QString::number(TPC);
+            }
+
+            int rg = -1;
+            if(nbo == 1)
+            {
+                rg = 1;
+            }
+            else if(nbo > 1 && o == 0)
+            {
+                rg = 0;
+            }
+            else if(nbo > 1 && o == (nbo-1))
+            {
+                rg = 2;
+            }
+            else if(nbo > 1 && o != 0 && o != (nbo-1))
+            {
+                rg = 3;
+            }
+            QString Nomongl = QString::number(o+1);
+            ongletdetailtrajet QQ(ST1,ST2,ST3,ST4,ST5,rg);
+            m_Onglets->addTab(QQ,"Tronçon "+ Nomongl);
+        }
+
+        m_DurTot->display(DTI);
+        m_NbCorres->display(nbo-1);
+        m_Onglets->update();
 }
 
-void EditionOnglets()
-{
-
-}
 
 

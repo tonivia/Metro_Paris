@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     /***************************************************************************************************************************************/
 
 
-    //reseauparis RATP;
-    //RATP.CreationReseauComplet();
+    reseauparis RATP;
+    RATP.CreationReseauComplet();
 
     /*
      * A l'issue de la construction nous obtenons donc 2 matrices :
@@ -107,12 +107,11 @@ int main(int argc, char *argv[])
     TEST2[2][3] = 10.2;
     TEST2[2][4] = 0.0;
 
-    double DurTot = 2070.0;
     int nbcor = 2;
-    double TPCoor = 240.0;
+    double TPCor = 240.0;
     double Tam = 150.0;
 
-    interface Fenetre(TEST2,DurTot,nbcor,TPCor,Tam,RATP);
+    interface Fenetre(TEST2,TPCor,Tam,RATP);
 
 
     //interface Fenetre(RATP,DJK);

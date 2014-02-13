@@ -20,6 +20,8 @@ public:
     double GetDureeTotale(void) const;
     int GetNbCorres(void) const;
     std::vector <std::vector <double> > GetMatriceSortie(void) const;
+    double GetTpsCorres(void);
+    double GetTpsAttente(void);
 
     // fonction interne à l'algorithme
 

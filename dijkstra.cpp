@@ -90,6 +90,16 @@ std::vector <std::vector <double> > dijkstra::GetMatriceSortie() const
     return m_MatriceSortie;
 }
 
+double dijkstra::GetTpsCorres()
+{
+   return m_TpsCorres;
+}
+
+double dijkstra::GetTpsAttente()
+{
+    return m_TpsAttente;
+}
+
 void dijkstra::RebootAlgo()
 {
     m_NbCorres = 0;

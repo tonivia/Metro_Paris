@@ -14,7 +14,10 @@
 #include <QString>
 #include <QStringList>
 #include <vector>
+#include <QMessageBox>
+#include <QVector>
 
+#include "ongletdetailtrajet.h"
 #include "reseauparis.h"
 #include "dijkstra.h"
 
@@ -24,10 +27,9 @@ class interface : public QWidget
     Q_OBJECT
 
     public:
-        interface(std::vector <std::vector <double> > TEST, double AA, int BB, double CC, double DD,reseauparis const& RATP); //constructeur pour les test
+        interface(std::vector <std::vector <double> > TEST, double CC, double DD,reseauparis const& RATP); //constructeur pour les test
         //interface(reseauparis const& RATP, dijkstra& DJK);
         void DefAlpha(void);
-        void EditionOnglets(void);
 
    public slots:
         void MajListeStaDep(int RgDepLetSta);
@@ -44,6 +46,7 @@ class interface : public QWidget
         int m_StationArriveeSelect;
         double m_TempsAttente ;
         double m_TpCor;
+        double m_DurTot;
 
         // général
         QVBoxLayout * m_DispoVGen;
@@ -88,10 +91,7 @@ class interface : public QWidget
         //Onglets
         std::vector <std::vector <double> > m_CheminOpt;
         QTabWidget * m_Onglets;
-        std::vector <QWidget> m_VectOnglets;
-
-
-
+        QVector<ongletdetailtrajet> * m_VectOnglets;
 
 };
 
